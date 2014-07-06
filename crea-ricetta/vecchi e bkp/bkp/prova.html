@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="IT-it">
+	<head>
+		<title>Crea Ricetta</title>
+		<meta charset='utf-8'/>
+				
+		<script type="text/javascript" src="data/jquery-1.8.3.js"></script>
+		<script type="text/javascript" src="data/jquery-ui-1.10.4.custom.js"></script>
+		<script type="text/javascript" src="data/bootstrap/js/bootstrap.js"></script>
+		<script type="text/javascript" src="data/touch.js"></script>
+		<script type="text/javascript" src="data/typeahead.bundle.js"></script>
+		<script type="text/javascript" src="data/autocomplete.js"></script>
+
+		<link rel="stylesheet" href="data/bootstrap/css/bootstrap.css"></link>
+
+
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=0.7, minimum-scale=0.7, maximum-scale=0.7">
+		<style type="text/css">
+		</style>
+		<script>
+
+
+		</script>
+		<script type="text/javascript" charset="utf-8">
+
+		$(document).ready(main);
+
+		var sostanze;
+
+		function main() {
+
+			$("#test").click(function(){
+				console.log("ok");
+				$.ajax({
+			      type: "POST",
+			      url: "download.php",
+			      data: "test",
+			      success: function(msg)
+			      {
+			        
+			      },
+			      error: function(err)
+			      {
+			        alert("Chiamata fallita, si prega di riprovare..." +err);
+			      }
+			    });
+			});
+		
+		}
+
+		
+
+
+		</script>
+	</head>
+	
+	<body>
+		<div id="risultato"></div>
+
+		<div id="tabella">
+			<form action="download.php" method="post">
+				<input type="hidden" value="culo" id="ricetta" name = "ricetta" />
+				<input type="submit" value="manda"/>
+			</form>
+		</div>
+
+	</body>
+</html>

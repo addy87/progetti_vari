@@ -1,0 +1,146 @@
+html {
+	height: 100%;	
+}
+
+body {
+	background: url('bg2.jpg') center center !important;
+	background-size: cover !important;
+	height:auto;
+	font-family: 'Open Sans', 'sans-serif' !important;
+	font-weight: 300 !important;
+	background-attachment: fixed !important;
+}
+
+a, p, h1, h2, h3, label, button, li {
+	font-family: 'Open Sans', 'sans-serif' !important;
+	font-weight: 300 !important;
+}
+
+code, kbd, pre, samp, kbd li {
+font-family: Menlo,Monaco,Consolas,"Courier New",monospace !important;
+}
+
+.header {
+	text-align: center;
+	background-color: red;
+	margin-top: 0px;
+	border-bottom:1px solid black;
+	margin-bottom: 40px;
+	background: #7d7e7d; /* Old browsers */
+	background: -moz-linear-gradient(top,  #7d7e7d 0%, #0e0e0e 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#7d7e7d), color-stop(100%,#0e0e0e)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #7d7e7d 0%,#0e0e0e 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #7d7e7d 0%,#0e0e0e 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #7d7e7d 0%,#0e0e0e 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #7d7e7d 0%,#0e0e0e 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7d7e7d', endColorstr='#0e0e0e',GradientType=0 ); /* IE6-9 */
+
+
+}
+
+.header h3{
+	margin-top: 0px;
+	padding-top: 10px;
+	padding-bottom: 5px;
+	color: white;
+	font-weight: 300;
+}
+
+.container{
+	background-color: rgba(255,255,255,0);
+	padding: 10px 30px 10px 30px;
+	margin-bottom: 50px;
+}
+
+#tab {
+	width: 100%;
+}
+
+#ricetta {
+	list-style: none;
+	padding: 0 !important;
+
+}
+
+#ricetta li {
+	border: 1px solid #ccc;
+	background: #eee;
+	font-weight: bold;
+	color: #222;
+	background-image: -webkit-gradient(linear,left top,left bottom,from( #fff ),to( #f1f1f1 ));
+	background-image: -webkit-linear-gradient( #fff,#f1f1f1 );
+	background-image: -moz-linear-gradient( #fff,#f1f1f1 );
+	background-image: -ms-linear-gradient( #fff,#f1f1f1 );
+	background-image: -o-linear-gradient( #fff,#f1f1f1 );
+	background-image: linear-gradient( #fff,#f1f1f1 );
+	padding: 5px 5px 5px 40px !important;
+	cursor: all-scroll;
+	font-size: 18px;
+}
+
+#ricetta li.fase {
+	cursor: all-scroll;
+	background-color: #dff0d8 !important;
+	background-image: none !important;
+	padding: 5px 5px 5px 20px !important;
+	margin: 0 !important;
+	font-size: 22px;
+	font-weight: 400 !important;
+}
+
+#ricetta li.fase .glyphicon, #ricetta li .glyphicon{
+	font-size: 22px;
+	text-shadow: 0 1px 0 black;
+}
+
+.separatore {
+	width: 90%;
+	margin: auto;
+	height: 1px;
+	background-color: grey;
+	margin-top:20px;
+	margin-bottom:20px;
+}
+
+#totale p{
+	text-align: center;
+	font-weight: 600 !important;
+}
+
+#output {
+	background-color: #e3e3e3;
+	list-style: none;
+	margin-top: 30px;
+}
+
+
+#info {
+	position: absolute;
+	right: 10px;
+	top: 5px;
+	border:none !important;
+
+}
+
+#info .btn {
+	border:none !important;
+}
+#info .glyphicon{
+	font-size: 20px !important;
+	color: white;
+	background: none !important;
+}
+
+#info .glyphicon:hover{
+	color: rgb(223, 223, 223);
+}
+
+.dropdown-menu {
+	min-width: 400px !important;
+}
+
+
+strong a{
+	font-weight: 600 !important;
+}
+

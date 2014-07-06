@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="IT-it">
+	<head>
+		<title>Crea Elenco Materie Prime</title>
+		<meta charset='utf-8'/>
+				
+		<script type="text/javascript" src="data/jquery-1.8.3.js"></script>
+
+		<script type="text/javascript" src="data/jquery-ui-1.10.4.custom.js"></script>
+		<script type="text/javascript" src="data/bootstrap/js/bootstrap.js"></script>
+		<script type="text/javascript" src="data/touch.js"></script>
+		<script type="text/javascript" src="data/typeahead.bundle.js"></script>
+		<script type="text/javascript" src="data/autocomplete.js"></script>
+		<script type="text/javascript" src="data/jspdf.min.js"></script>
+		<script type="text/javascript" src="data/ricette_lola.js"></script>
+		<script type="text/javascript" src="data/download-data-uri.js"></script>
+		<script type="text/javascript" src="data/jquery.tinysort.min.js"></script>
+
+
+		<link rel="stylesheet" href="data/bootstrap/css/bootstrap.css"></link>
+		<link rel="stylesheet" href="data/file.css"></link>
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=0.8, minimum-scale=0.8, maximum-scale=0.8">
+		<style type="text/css">
+			#formo {
+				width: 100%;
+			}
+
+			textarea {
+				width: 100%;
+			}
+		</style>
+		<script>
+
+		</script>
+		<script type="text/javascript" charset="utf-8">
+
+		$(document).ready(main);
+
+	
+
+		function main() {
+
+			$("textarea").val("Acqua\nGlicerina\nAbil Care 85");
+			
+		}
+
+
+		</script>
+	</head>
+	
+	<body>
+		<div class="wrapper">
+			
+			<div class="header">
+			  <h3>Crea Elenco Materie Prime</h3>
+
+				<div class="btn-group" id="info">
+					<span type="button" class="btn btn-default dropdown-toggle glyphicon glyphicon-question-sign" data-toggle="dropdown"></span>
+					<div class="dropdown-menu pull-right" role="menu" style="padding:1px;">
+						
+						<div class="panel panel-primary" style="margin-bottom:0; opacity:1; z-index:999">
+							<div class="panel-heading">
+								<h3 class="panel-title">Crediti</h3>
+							</div>
+							<div class="panel-body">
+								<p>Creato da <strong><a href="http://lola.mondoweb.net/memberlist.php?mode=viewprofile&u=31791" target="_blank">Augusten</a></strong> per l'<strong><a href="http://lola.mondoweb.net/index.php" target="_blank">Angolo di Lola</a></strong>
+
+								<br>
+								<br>
+
+								<p>
+									<a type="button" class="btn btn-primary" href="mailto:augusten@outlook.com">
+										<span class="glyphicon glyphicon-envelope"></span>
+									</a>
+								</li>
+
+								<br>
+								<br>
+
+
+								<p style="font-size:10px"><a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Licenza Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />Quest'opera è distribuita con Licenza <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribuzione - Non commerciale - Non opere derivate 4.0 Internazionale</a>.</li>
+
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
+			
+
+
+
+			<div class="container" id="container1">
+				<div class="row">
+					<p>Come creare il tuo elenco di materie prime:</li>
+					<ul class="list-group">
+					<li class="list-group-item">Compila l'area di testo sottostante seguendo l'esempio. Ovvero, per ogni riga UN solo ingrediente.</li>
+					<li class="list-group-item">E' importante che ogni riga contenga solo il nome di un ingrediente. Vai a capo e inserisci un altro nome.</li>
+					<li class="list-group-item">Quando sei pronto, clicca su SALVA. Verrà chiesto di salvare un file di testo.</li>
+					<li class="list-group-item">Questo file potrai utilizzarlo in Crea Ricetta per avere suggerimenti sulle materie da te possedute.</li>
+					<li class="list-group-item">Puoi anche modificare questo file direttamente dal tuo pc. L'importante è seguire la regola di una riga - un ingrediente e che il file sia un file di testo TXT.</li>
+					</ul>
+					<form id="formo" method="POST" action="download2.php">
+						<textarea rows="10" name="elenco" id="elenco"></textarea>
+						<input type="submit" value="Salva" />
+					</form>
+				
+				</div>
+			</div>
+
+
+	</body>
+</html>

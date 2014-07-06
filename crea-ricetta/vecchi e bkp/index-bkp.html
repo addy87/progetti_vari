@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="IT-it">
+	<head>
+		<title>Crea Ricetta</title>
+		<meta charset='utf-8'/>
+				
+		<script type="text/javascript" src="data/jquery-1.10.2.js"></script>
+		<script type="text/javascript" src="data/jquery-ui-1.10.4.custom.js"></script>
+		<script type="text/javascript" src="data/bootstrap/js/bootstrap.js"></script>
+		<script type="text/javascript" src="data\touch.js"></script>
+
+		<link rel="stylesheet" href="data/bootstrap/css/bootstrap.css"></link>
+		<link rel="stylesheet" href="data/file.css"></link>
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=0.7, minimum-scale=0.7, maximum-scale=0.7">
+		<style type="text/css">
+		</style>
+		<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-50441901-1', 'altervista.org');
+  ga('send', 'pageview');
+
+</script>
+		<script type="text/javascript" charset="utf-8">
+
+		$(document).ready(main);
+
+		var quantita_totale = 0.0;
+		var mancano = 0.0;
+
+		function main() {
+			$("#add_fase").click(add_fase);
+			$("#add_ingrediente").click(add_ingrediente);		
+			$("#add_riga").click(add_riga);		
+			$("#reset").click(reset);		
+
+			$("#stampa_semplice").click(stampa_semplice);
+
+			$("#container1").hide();
+			$("#container2").hide();
+
+			$("#output").hide();
+
+			$("#ricetta").hide();
+			$("#ricetta").sortable();
+			$("#ricetta").disableSelection();
+			check();
+
+			$("#formo").submit(function(evt) {
+								evt.preventDefault();
+								$("#nome_ingrediente").val("");
+								$("#quantita_ingrediente").val("");
+								$("#nome_ingrediente").focus();
+							});
+
+
+
+
+
+			
+		}
+
+		function add_fase() {
+			var nome = prompt("Nome della fase? (es. A1 - B - ...)");
+
+			if (nome != "") {
+				$("#ricetta").fadeIn("slow");
+				$("#ricetta").append("<li class='fase'>Fase " + nome.toUpperCase() + "<a href='' style='float:right; color:#d9534f' onClick='$(this).parent().remove(); check(); return false'><span class='glyphicon glyphicon-remove'></span></a></li>");
+				check();
+			}
+		}
+
+		function add_ingrediente() {
+			var nome = $("#nome_ingrediente").val();
+			if(nome=="")
+				return;
+			var quantita = $("#quantita_ingrediente").val();
+			quantita = parseFloat(quantita.replace(',', '.'));
+			if(!isNaN(parseFloat(quantita))) {
+				$("#ricetta").fadeIn("slow");
+				var li = $("<li>");
+				li.html("<span class='nome'>"+nome + "</span> <span class='quantita_singola'>" + parseFloat(quantita).toFixed(2) + "</span><a href='' style='float:right; color:#d9534f' onClick='$(this).parent().remove(); cancella_ingrediente("+quantita+"); return false'><span class='glyphicon glyphicon-remove'></span></a><a href='' style='float:right; color:#2887FF; margin-right:5px' class='modifica'><span class='glyphicon glyphicon-pencil'></span></a>");
+				$("#ricetta").append(li);
+				$(".modifica").click(modifica_ingrediente);
+				quantita_totale += parseFloat(quantita);
+
+				mancano = parseFloat(100.00-quantita_totale).toFixed(2);
+
+				if (mancano > 0) {
+					$("#totale").html("<p>Totale: " + quantita_totale.toFixed(2) + "</p><p>Mancano " + mancano + " per arrivare a 100 (<a href='' onClick='add_acqua("+mancano+"); return false'>Aggiungere il restante in acqua?</a>)</p>");
+				}
+				else
+					$("#totale").html("<p>Totale: " + quantita_totale.toFixed(2));
+
+				$(".rimuovi").click(cancella_ingrediente);
+			}
+			check();
+		}
+
+		function cancella_ingrediente(q) {
+
+			quantita_totale -= parseFloat(q);
+			mancano = parseFloat(100.00-quantita_totale).toFixed(2);
+			if (mancano > 0) {
+				
+				$("#totale").html("<p>Totale: " + quantita_totale.toFixed(2) + "</p><p>Mancano " + mancano + " per arrivare a 100 (<a href='' onClick='add_acqua("+mancano+"); return false'>Aggiungere il restante in acqua?</a>)</p>");
+			}
+			else
+				$("#totale").html("<p>Totale: " + quantita_totale.toFixed(2));
+			check();
+		}
+
+		function modifica_ingrediente(e) {
+			e.preventDefault();
+
+			var vecchio_nome = $(this).parent().contents()[0]["innerHTML"];
+			var vecchia_quantita = $(this).parent().contents()[2]["innerHTML"];
+
+
+			var nuovo_nome = prompt("Nuovo nome dell'ingrediente?", vecchio_nome);
+			if (nuovo_nome == '' || nuovo_nome == null)
+				return false;
+
+			var nuova_quantita = prompt("Nuova quantita dell'ingrediente?", vecchia_quantita);
+
+			nuova_quantita = parseFloat(nuova_quantita.replace(',', '.'));
+
+			if (nuova_quantita == '' || isNaN(nuova_quantita))
+				return false;
+
+			var nuovo_html = '<span class="nome">'+nuovo_nome+'</span> <span class="quantita_singola">'+nuova_quantita.toFixed(2)+'</span><a href="" style="float:right; color:#d9534f" onclick="$(this).parent().remove(); cancella_ingrediente('+nuova_quantita+'); return false"><span class="glyphicon glyphicon-remove"></span></a><a href="" style="float:right; color:#2887FF; margin-right:5px" class="modifica"><span class="glyphicon glyphicon-pencil"></span></a>';
+			$(this).parent().html(nuovo_html);
+
+			$(".modifica").click(modifica_ingrediente);
+
+			quantita_totale -= parseFloat(vecchia_quantita);
+			quantita_totale += parseFloat(nuova_quantita);
+
+			mancano = parseFloat(100.00-quantita_totale).toFixed(2);
+
+			if (mancano > 0) {
+				$("#totale").html("<p>Totale: " + quantita_totale.toFixed(2) + "</p><p>Mancano " + mancano + " per arrivare a 100 (<a href='' onClick='add_acqua("+mancano+"); return false'>Aggiungere il restante in acqua?</a>)</p>");
+			}
+			else
+				$("#totale").html("<p>Totale: " + quantita_totale.toFixed(2));
+
+			$(".rimuovi").click(cancella_ingrediente);
+
+			
+
+		}
+
+		function add_riga() {
+			$("#ricetta").fadeIn("slow");
+			var li = $("<li>");
+			li.html("<a href='' style='float:right; color:#d9534f' onClick='$(this).parent().remove();check(); return false'><span class='glyphicon glyphicon-remove'></span></a>");
+			li.css("height", "38px");
+			$("#ricetta").append(li);
+			check();
+		}
+
+		function add_acqua(q) {
+
+			q = parseFloat(q);
+
+			var li = $("<li>");
+			li.html("<span class='nome'>Acqua</span> <span class='quantita_singola'>" + q.toFixed(2) + "</span><a href='' style='float:right; color:#d9534f' onClick='$(this).parent().remove(); cancella_ingrediente("+q+"); return false'><span class='glyphicon glyphicon-remove'></span></a><a href='' style='float:right; color:#2887FF; margin-right:5px' class='modifica'><span class='glyphicon glyphicon-pencil'></span></a>");
+			$("#ricetta").append(li);
+			$(".modifica").click(modifica_ingrediente);
+			quantita_totale += q;
+			$("#totale").html("<p>Totale: " + quantita_totale.toFixed(2));
+
+			$(".rimuovi").click(cancella_ingrediente);
+			
+			check();
+		}
+
+		function check() {
+
+			if($("#ricetta").find("li").length > 0) {
+				$("#reset").show();
+				$("#totale").fadeIn("slow");
+				$("#container1").fadeIn("slow");
+				$("#container2").fadeIn("slow");
+			} else {
+				$("#reset").hide();
+				$("#totale").fadeOut("slow");
+				$("#container1").fadeOut("slow");
+				$("#container2").fadeOut("slow");
+			}
+
+			$("body").css("background-size", "cover");
+
+		}
+
+		function reset() {
+			$("#reset").fadeOut(300);
+			$("#totale").fadeOut(300);
+			$("#output").fadeOut(300);
+			$("#ricetta").fadeOut(300, function() { $(this).empty(); $("#totale").empty(); $("#output kbd").empty(); check();});
+
+			quantita_totale = 0;
+
+
+		}
+
+		function stampa_semplice() {
+			$("#output").fadeIn("slow");
+			$("#output kbd").html($("#ricetta").html());
+			$("#output kbd a").replaceWith("");
+		}
+
+
+		</script>
+	</head>
+	
+	<body>
+		<div class="wrapper">
+			
+			<div class="header">
+			  <h3>Crea Ricetta</h3>
+
+				<div class="btn-group" id="info">
+					<span type="button" class="btn btn-default dropdown-toggle glyphicon glyphicon-question-sign" data-toggle="dropdown"></span>
+					<div class="dropdown-menu pull-right" role="menu" style="padding:1px">
+						
+						<div class="panel panel-primary" style="margin-bottom:0">
+							<div class="panel-heading">
+								<h3 class="panel-title">Crediti</h3>
+							</div>
+							<div class="panel-body">
+								<p>Creato da <strong><a href="http://lola.mondoweb.net/memberlist.php?mode=viewprofile&u=31791" target="_blank">Augusten</a></strong> per l'<strong><a href="http://lola.mondoweb.net/index.php" target="_blank">Angolo di Lola</a></strong>
+
+								<br>
+								<br>
+
+								<p>
+									<a type="button" class="btn btn-primary" href="mailto:augusten@outlook.com">
+										<span class="glyphicon glyphicon-envelope"></span>
+									</a>
+								</p>
+
+								<br>
+								<br>
+
+
+								<p style="font-size:10px"><a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Licenza Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />Quest'opera è distribuita con Licenza <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribuzione - Non commerciale - Non opere derivate 4.0 Internazionale</a>.</p>
+
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
+			
+
+			<div class="container">
+
+				<div class="row">
+					<div class="alert alert-info alert-dismissable" style="text-align:center">
+						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+						<h2 style="margin-top:0; font-weight:600 !important">Benvenuto!</h2> 
+						<p>Crea la tua ricetta.</p>
+						<p>1. Clicca sul pulsante "Aggiungi Fase" per cominciare.</p>
+						<p>2. Inserisci il nome di un ingrediente, la sua quantità e clicca "Aggiungi Ingrediente".</p>
+						<p>3. Nell'elenco, clicca e trascina le voci per riordinarle secondo le tue necessità.</p>
+						<p>4. Usa il tasto "Stampa ricetta semplice" per ottenere un testo non formattato. </p>
+					</div>
+					<button id="add_fase" type="button" class="btn btn-primary btn-block"><span class='glyphicon glyphicon-plus-sign'></span> Aggiungi Fase</button>
+
+				</div>
+
+				<br>
+				<div class="row">
+					<form id="formo" data-ajax="false">
+						<table id="tab" >
+							<tr>
+								<th>Nome ingrediente:</th>
+								<th>Quantità: </th>
+							</tr>
+							<tr>							
+								<td style="width: 40%"><input type="text" id="nome_ingrediente" class="form-control" /></td>
+								<td style="width: 40%"><input type="number" id="quantita_ingrediente" step="any" class="form-control"/></td>
+								<td style="width: 20%; text-align: right"><button type="submit" id="add_ingrediente" value="Aggiungi ingrediente" type="button" class="btn btn-primary"><span class='glyphicon glyphicon-plus-sign'></span> Aggiungi Ingrediente</button></td>
+							</tr>
+
+						</table>
+					</form>
+				</div>
+
+				<div class="row">
+					<button id="add_riga" type="button" class="btn btn-default btn-block" style="margin-top:20px"><span class='glyphicon glyphicon-plus-sign'></span> Aggiungi riga vuota</button>
+				</div>
+			</div>
+
+
+			<div class="container" id="container1">
+				<div class="row">
+					<div id="contenuto">
+						<ul id="ricetta" >
+						</ul>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="separatore"></div>
+					<div id="totale"></div>
+				</div>
+
+				<div class="row">
+					<button id="reset" class="btn btn-danger btn-sm pull-right"><span class='glyphicon glyphicon-trash'></span> Cancella tutto</button>
+				</div>
+			</div>
+
+
+			<div class="container" id="container2">
+				<div class="row">
+					<button id="stampa_semplice" type="button" class="btn btn-default"><span class='glyphicon glyphicon-pencil'></span> Stampa ricetta semplice</button>
+				</div>
+
+				<div class="row">
+					<div id="output" class="well"><kbd></kbd></div>
+				</div>
+
+			</div>
+
+
+			
+
+
+
+
+
+
+
+
+
+		</div>
+
+
+	</body>
+</html>

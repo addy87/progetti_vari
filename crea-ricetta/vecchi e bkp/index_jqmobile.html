@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="IT-it">
+	<head>
+		<title>App Ricetta</title>
+		<meta charset='utf-8'/>
+				
+		<script type="text/javascript" src="data\jquery-1.10.2.js"></script>
+		<script type="text/javascript" src="data\jquery_mobile\jquery.mobile-1.3.0.min.js"></script>
+		<script type="text/javascript" src="data\jquery-ui-1.10.4.custom.js"></script>
+		<link rel="stylesheet" href="data\jquery_mobile\jquery.mobile-1.3.0.min.css"></link>
+		<link rel="stylesheet" href="data\file.css"></link>
+		<style type="text/css">
+		</style>
+		
+		<script type="text/javascript" charset="utf-8">
+
+		$(document).ready(main);
+
+		var quantita_totale = 0.0;
+
+		function main() {
+			$("#add_fase").click(add_fase);
+			$("#add_ingrediente").click(add_ingrediente);			
+			$("#reset").click(reset);		
+
+			$("#reset").closest('.ui-btn').css("width", "30%");
+			$("#stampa_semplice").click(stampa_semplice);			
+			$("#ricetta").hide();
+			$("#ricetta").sortable();
+			$("#ricetta").disableSelection();
+			check();
+
+			$("#formo").submit(function(evt) {
+								evt.preventDefault();
+								$("#nome_ingrediente").val("");
+								$("#quantita_ingrediente").val("");
+								$("#nome_ingrediente").focus();
+							});
+
+
+
+			
+		}
+
+		function add_fase() {
+			var nome = prompt("Nome della fase? (es. A1 - B - ...)");
+
+			if (nome != "") {
+				$("#ricetta").fadeIn("slow");
+				$("#ricetta").append("<li class='fase'>Fase " + nome.toUpperCase() + "<a href='' style='float:right' onClick='$(this).parent().remove();' class='ui-icon ui-icon-delete ui-icon-shadow'></a></li>");
+				check();
+			}
+		}
+
+		function add_ingrediente() {
+			var nome = $("#nome_ingrediente").val();
+			if(nome=="")
+				return;
+			var quantita = $("#quantita_ingrediente").val();
+			if(!isNaN(parseFloat(quantita))) {
+				$("#ricetta").fadeIn("slow");
+				var li = $("<li>");
+				li.html("<span class='nome'>"+nome + "</span> <span class='quantita_singola'>" + parseFloat(quantita).toFixed(2) + "</span><a href='' style='float:right' onClick='$(this).parent().remove(); cancella_ingrediente("+quantita+")' class='ui-icon ui-icon-delete ui-icon-shadow'></a>");
+				$("#ricetta").append(li);
+				quantita_totale += parseFloat(quantita);
+				$("#totale").html("<p>Totale: " + quantita_totale.toFixed(2) + "</p>");
+				$(".rimuovi").click(cancella_ingrediente);
+			}
+			check();
+		}
+
+		function cancella_ingrediente(q) {
+
+			quantita_totale -= parseFloat(q);
+			$("#totale").html("<p>Totale: " + quantita_totale.toFixed(2) + "</p>");
+			check();
+		}
+
+		function check() {
+
+			if($("#ricetta").find("li").length > 0) {
+				$("#reset").closest('.ui-btn').show();
+				$("#totale").fadeIn("slow");
+			} else {
+				$("#reset").closest('.ui-btn').hide();
+				$("#totale").fadeOut("slow");
+			}
+
+		}
+
+		function reset() {
+			$("#reset").closest('.ui-btn').fadeOut(300);
+			$("#totale").fadeOut(300);
+			$("#ricetta").fadeOut(300, function() { $(this).empty(); $("#totale").empty();});
+			quantita_totale = 0;
+
+		}
+
+		function stampa_semplice() {
+			$("#output").html($("#ricetta").html());
+			$("#output a").replaceWith("");
+		}
+
+
+
+
+
+/*
+
+
+
+function check_old() {
+    var totale = $(".quantita");
+    var totale_quantita = 0;
+
+    for (var i = 0; i < totale.length; i++) {
+        totale_quantita += parseFloat(totale[i]["innerText"]);
+    }
+    $("#totale").text(totale_quantita);
+
+
+
+}
+
+
+function add_ingrediente_old() {
+    var quantita = prompt("Quantità?");
+    if (quantita != "") {
+        var nome = $(this)[0]["innerText"].replace(/(\r\n|\n|\r)/gm, "");
+        $("#contenuto").append(nome + " <span class='quantita'>" + quantita + "</span><br>");
+        check();
+    }
+}*/
+		
+		</script>
+	</head>
+	
+	<body>
+		<div data-role="page" id="home">
+			<div data-role="header">
+				<h1>Crea Ricetta</h1>
+			</div>
+
+			<div data-role="content">
+
+				<button id="add_fase" data-icon="plus" data-iconpos="right">Aggiungi una Fase</button>
+
+				<br>
+
+				<form id="formo" data-ajax="false">
+					<table id="tab">
+						<tr>
+							<th>Nome ingrediente:</th>
+							<th>Quantità: </th>
+						</tr>
+						<tr>							
+							<td style="width: 40%"><input type="text" id="nome_ingrediente" /></td>
+							<td style="width: 40%"><input type="number" id="quantita_ingrediente" step="any"/></td>
+							<td style="width: 20%"><input type="submit" id="add_ingrediente" value="Aggiungi ingrediente" data-icon="plus" data-iconpos="right"/></td>
+						</tr>
+						<tr>
+							
+						</tr>
+					</table>
+				</form>
+
+				<div class="separatore"></div>
+
+				<div id="contenuto">
+					<ul id="ricetta" >
+					</ul>
+				</div>
+
+				<div id="totale"></div>
+
+				<button id="reset" data-mini="true" data-icon="alert">Cancella tutto</button>
+				<div class="separatore"></div>
+
+				<button id="stampa_semplice" data-icon="check">Ottieni ricetta semplice</button>
+				<div id="output"></div>
+
+
+			</div>
+		</div>	
+	</body>
+</html>

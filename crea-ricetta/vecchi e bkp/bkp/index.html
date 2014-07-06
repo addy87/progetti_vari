@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="IT-it">
+	<head>
+		<title>Crea Ricetta</title>
+		<meta charset='utf-8'/>
+				
+		<script type="text/javascript" src="data/jquery-1.8.3.js"></script>
+
+		<script type="text/javascript" src="data/jquery-ui-1.10.4.custom.js"></script>
+		<script type="text/javascript" src="data/bootstrap/js/bootstrap.js"></script>
+		<script type="text/javascript" src="data/touch.js"></script>
+		<script type="text/javascript" src="data/typeahead.bundle.js"></script>
+		<script type="text/javascript" src="data/autocomplete.js"></script>
+		<script type="text/javascript" src="data/jspdf.min.js"></script>
+		<script type="text/javascript" src="data/ricette_lola.js"></script>
+		<script type="text/javascript" src="data/download-data-uri.js"></script>
+
+
+		<link rel="stylesheet" href="data/bootstrap/css/bootstrap.css"></link>
+		<link rel="stylesheet" href="data/file.css"></link>
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=0.8, minimum-scale=0.8, maximum-scale=0.8">
+		<style type="text/css">
+		</style>
+		<script>
+		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		  ga('create', 'UA-50441901-1', 'altervista.org');
+		  ga('send', 'pageview');
+
+		</script>
+		<script type="text/javascript" charset="utf-8">
+		String.prototype.replaceAll = function(search, replace)
+			{
+			    //if replace is null, return original string otherwise it will
+			    //replace search string with 'undefined'.
+			    if(!replace) 
+			        return this;
+
+			    return this.replace(new RegExp('[' + search + ']', 'g'), replace);
+			};
+		$.fn.pulse = function(options) {
+
+		    var options = $.extend({
+		        times: 3,
+		        duration: 1000
+		    }, options);
+
+		    var period = function(callback) {
+		        $(this).animate({opacity: 0}, options.duration, function() {
+		            $(this).animate({opacity: 1}, options.duration, callback);
+		        });
+		    };
+		    return this.each(function() {
+		        var i = +options.times, self = this,
+		        repeat = function() { --i && period.call(self, repeat) };
+		        period.call(this, repeat);
+		    });
+		};
+
+		$(document).ready(main);
+		$(window).unload(controllo_fine);
+
+		window.onunload = window.onbeforeunload = (function(){
+		controllo_fine();
+		});
+
+		var mancano = 0.0;
+
+		function controllo_inizio() {
+
+				if(localStorage.getItem("backup").length > 10) {
+
+					/*$("#ricetta").html(localStorage.getItem("backup"));
+					$("#container1").fadeIn();
+					$("#ricetta").fadeIn();
+					check();
+
+					$(".modifica").each(function() {
+						$(this).unbind("click").click(modifica_ingrediente);
+					});*/
+
+					var elenco_funzioni = localStorage.getItem("backup").split("\n");
+
+
+			    	for (var i in elenco_funzioni) {
+			    		var ret = eval(elenco_funzioni[i]);
+			    	}
+					
+				}
+			
+		}
+
+		function controllo_fine() {
+			var funzioni = "";
+			
+
+			$("#ricetta li").each(function() {
+						if(!$(this).hasClass("riga") && !$(this).hasClass("fase")){
+							var nome = String($(this).find(".nome").text().replaceAll("'", '\\\''));
+
+							console.log(nome);
+							var qt = $(this).find(".quantita_singola").text();
+
+							funzioni += "add_ingrediente('"+nome+"','"+parseFloat(qt).toFixed(2)+"')\n";
+						} else if($(this).hasClass("fase")) {
+							var nome = String($(this).text()).replaceAll("'", '\\\'');
+							funzioni += "add_fase('"+nome+"')\n";
+						}
+					else {
+						funzioni += "add_riga();\n";
+					}
+			});
+
+			localStorage.setItem("backup", funzioni);
+		}
+
+		function main() {
+
+			$("#info").pulse({times: 6, duration: 200});
+			
+			autocomplete();
+			$("#files").change(handleFileSelect);
+			$("#add_fase").click(add_fase);
+			$("#add_ingrediente").click(add_ingrediente);		
+			$("#add_riga").click(add_riga);		
+			$("#reset").click(reset);
+
+			$("#converti").click(converti);
+
+			$("#stampa_semplice").click(stampa_semplice);
+
+			$("#salva_file").click(salva_file);
+
+			$("#print_pdf").click(print_pdf);
+
+
+			$("#ricetta_rosa").click(function() { ricette_lola("ricetta_rosa"); });
+			$("#ricetta_siero").click(function() { ricette_lola("ricetta_siero"); });
+			$("#ricetta_iseree").click(function() { ricette_lola("ricetta_iseree"); });
+
+			$("#container1").hide();
+			$("#container2").hide();
+
+			$("#output").hide();
+
+			$("#ricetta").hide();
+			$("#ricetta").sortable();
+			$("#ricetta").disableSelection();
+
+			$("#convertitore").hide();
+			$("#info_convertitore").hide();
+			check();
+
+			$("#formo").submit(function(evt) {
+								evt.preventDefault();
+								$("#nome_ingrediente").val("");
+								$("#quantita_ingrediente").val("");
+								$("#nome_ingrediente").focus();
+							});
+			$("#form_convert").submit(function(evt) {
+								evt.preventDefault();
+								converti();
+							});
+
+			controllo_inizio();
+
+
+
+			
+		}
+
+		function add_fase(par_nome) {
+			if(typeof arguments[0] != "string" || par_nome == null)
+				var nome = prompt("Nome della fase? (es. A1 - B - ...)");
+
+			if(typeof arguments[0] == "string" && par_nome != null) {
+				nome = par_nome;
+				$("#ricetta").fadeIn("slow");
+				$("#ricetta").append("<li class='fase'>" + nome + "<a href='' style='float:right; color:#d9534f' onClick='$(this).parent().remove(); check(); return false'><span class='glyphicon glyphicon-remove'></span></a></li>");
+				check();
+				return;
+			}else if (nome != "") {
+				$("#ricetta").fadeIn("slow");
+				$("#ricetta").append("<li class='fase'>Fase " + nome.toUpperCase() + "<a href='' style='float:right; color:#d9534f' onClick='$(this).parent().remove(); check(); return false'><span class='glyphicon glyphicon-remove'></span></a></li>");
+				check();
+			}
+		}
+
+		function add_ingrediente(par_nome, par_qt) {
+
+
+			var nome = $("#nome_ingrediente").val();
+
+
+
+			if(typeof arguments[0] == "string" && par_nome != null)
+				nome = par_nome;
+
+
+			if(nome=="")
+				return;
+
+			var quantita = $("#quantita_ingrediente").val();
+			quantita = parseFloat(quantita.replace(',', '.'));
+
+
+			if(typeof arguments[1] == "string" && par_qt != null)
+				quantita = parseFloat(par_qt);
+
+
+			if(!isNaN(parseFloat(quantita))) {
+				$("#ricetta").fadeIn("slow");
+
+				var testo = "<li><span class='nome'>"+nome + "</span> <span class='quantita_singola'>" + parseFloat(quantita).toFixed(2) + "</span><a href='' style='float:right; color:#d9534f' onClick='$(this).parent().remove(); cancella_ingrediente("+quantita+"); return false'><span class='glyphicon glyphicon-remove'></span></a><a href='' style='float:right; color:#2887FF; margin-right:5px' class='modifica'><span class='glyphicon glyphicon-pencil'></span></a></li>";
+				$("#ricetta").append(testo);
+
+				$(".modifica").unbind("click").click(modifica_ingrediente);
+				$(".rimuovi").click(cancella_ingrediente);
+			}
+			check();
+		}
+
+		function cancella_ingrediente(q) {
+
+
+			check();
+		}
+
+		function modifica_ingrediente(e) {
+			try{
+				e.preventDefault();
+			}
+			catch(err) {
+				console.log(err);
+			}
+
+			var vecchio_nome = $(this).parent()[0]["children"][0]["textContent"];
+			var vecchia_quantita = parseFloat($(this).parent()[0]["children"][1]["textContent"]);
+
+
+			var nuovo_nome = prompt("Nuovo nome dell'ingrediente?", vecchio_nome);
+			if (nuovo_nome == '' || nuovo_nome == null)
+				return false;
+
+			var nuova_quantita = prompt("Nuova quantita dell'ingrediente?", vecchia_quantita);
+
+			nuova_quantita = parseFloat(nuova_quantita.replace(',', '.'));
+
+			if (nuova_quantita == '' || isNaN(nuova_quantita))
+				return false;
+
+			/*var nuovo_html = '<span class="nome">'+nuovo_nome+'</span> <span class="quantita_singola">'+nuova_quantita.toFixed(2)+'</span><a href="" style="float:right; color:#d9534f" onclick="$(this).parent().remove(); cancella_ingrediente('+nuova_quantita+'); return false"><span class="glyphicon glyphicon-remove"></span></a><a href="" style="float:right; color:#2887FF; margin-right:5px" class="modifica2"><span class="glyphicon glyphicon-pencil"></span></a>';
+			$(this).parent().html(nuovo_html);
+
+			$(".modifica").click(modifica_ingrediente);
+
+			quantita_totale -= parseFloat(vecchia_quantita);
+			quantita_totale += parseFloat(nuova_quantita);*/
+			$(this).parent().remove();
+
+			cancella_ingrediente(vecchia_quantita);
+			add_ingrediente(nuovo_nome, String(nuova_quantita));
+			check();
+
+
+			
+
+		}
+
+		function add_riga() {
+			$("#ricetta").fadeIn("slow");
+			var li = $("<li class='riga'>");
+			li.html("<a href='' style='float:right; color:#d9534f' onClick='$(this).parent().remove();check(); return false'><span class='glyphicon glyphicon-remove'></span></a>");
+			li.css("height", "38px");
+			$("#ricetta").append(li);
+			check();
+		}
+
+		function add_acqua(q) {
+
+			q = parseFloat(q);
+
+			add_ingrediente("Acqua", q);
+			
+			check();
+		}
+
+		function check() {
+			var quantita_totale = 0.0;
+
+			if($("#ricetta").find("li").length > 0) {
+				$("#reset").show();
+				$("#totale").fadeIn("slow");
+				$("#container1").fadeIn("slow");
+				$("#container2").fadeIn("slow");
+			} else {
+				$("#reset").hide();
+				$("#totale").fadeOut("slow");
+				$("#container1").fadeOut("slow");
+				$("#container2").fadeOut("slow");
+			}
+
+
+			$("#ricetta li").each(function() {
+				if(!$(this).hasClass("riga") && !$(this).hasClass("fase")){
+					quantita_totale += parseFloat($(this)[0]["children"][1]["textContent"]);
+				}
+			} );
+
+			var mancano = parseFloat(100-quantita_totale);
+
+			if (mancano <= 0 || quantita_totale ==0)
+				$("#totale").html("<p>Totale: " + quantita_totale.toFixed(2) + "gr</p>");
+			else if (mancano > 0 && quantita_totale > 0 && mancano != 0) {
+				$("#totale").html("<p>Totale: " + quantita_totale.toFixed(2) + "</p><p>Mancano " + mancano.toFixed(2) + "gr per arrivare a 100. <a onClick='add_ingrediente("+"\"Acqua\",\""+mancano.toFixed(2)+"\"); return false' href=''>Vuoi aggiungerli in acqua?</a>");
+			} else if (mancano >0 && quantita_totale < 0)
+				$("#totale").html("<p>Totale: " + quantita_totale.toFixed(2) + "gr. Antimateria creata. DISTRUZIONE UNIVERSO IN CORSO....</p>");
+
+			
+
+			$("body").css("height", $(document).height());
+			
+			
+			return quantita_totale;
+
+		}
+
+		function reset() {
+			$("#reset").fadeOut(300);
+			$("#totale").fadeOut(300);
+			$("#output").fadeOut(300);
+			$("#ricetta").fadeOut(300, function() { $(this).empty(); $("#totale").empty(); $("#output kbd").empty(); check();});
+
+			quantita_totale = 0;
+
+			$("#files").val("");
+
+
+		}
+
+		function stampa_semplice() {
+
+			$("#output").fadeIn("slow");
+			$("#output kbd").html($("#ricetta").html());
+			$("#output kbd a").replaceWith("");
+			localStorage.setItem('ricetta', $("kbd").html());
+			var quantita_totale = check();
+
+			if (quantita_totale != 100.00) {
+				$(".convertitore").hide();
+				$(".info_convertitore").show();
+			} else {
+				$(".convertitore").show();
+				$(".info_convertitore").hide();
+			}
+			$("#totale_kbd").text("Totale: " + parseFloat(quantita_totale).toFixed(2));
+		}
+
+		function converti() {
+			var totale_kbd = 0.0;
+			var quantita_scelta = parseFloat($("#quantita_ricetta").val()).toFixed(2);
+			var quantita_totale = check();	
+
+			if (!isNaN(quantita_scelta)) {		
+				var ricetta = $(localStorage.getItem('ricetta'));
+				var ricette = ricetta.find(".quantita_singola");
+
+				var fattore = parseFloat(quantita_scelta/quantita_totale).toFixed(2);
+
+				$("kbd li .quantita_singola").each(function(j) {
+					$(this).text(parseFloat(ricette[j]["innerHTML"]*fattore).toFixed(2));
+					totale_kbd += ricette[j]["innerHTML"]*fattore;
+				});
+
+				$("#totale_kbd").text("Totale: " + parseFloat(totale_kbd).toFixed(2));
+				$("#quantita_ricetta").focus();
+			}
+			
+		}
+
+		function print_pdf() {
+			var titolo = prompt("Nome della ricetta?");
+
+			var doc = new jsPDF();
+
+			if (titolo == "" || titolo == undefined || titolo == null) {
+				titolo = "Ricetta";
+				
+				doc.setProperties({
+					title: 'Ricetta',
+					subject: 'Ricetta Cosmetica',
+					author: 'Augusten augusten@outlook.com',
+					keywords: 'web, ricetta',
+					creator: 'Augusten augusten@outlook.com'
+				});
+
+			} else {
+				doc.setProperties({
+					title: titolo,
+					subject: 'Ricetta Cosmetica',
+					author: 'Augusten augusten@outlook.com',
+					keywords: 'web, ricetta',
+					creator: 'Augusten augusten@outlook.com'
+				});
+			}			
+
+			doc.setFont("helvetica");
+
+			var riga = 35;
+
+			doc.setFontSize(16);
+			doc.setFontType("bold");
+			doc.text(20, 20, titolo);
+
+			doc.setLineWidth(0.25);
+			doc.line(10, 25, 200, 25);
+			doc.setFontType("normal");
+			doc.setFontSize(12);
+			$("kbd li").each(function(i) {
+				if($(this)[0]["textContent"].substring(0, 4) == "Fase") {					
+					doc.setFontType("bold");
+					doc.text(20, riga, $(this)[0]["textContent"]);
+				} else {
+					doc.setFontType("normal");
+					doc.text(25, riga, $(this)[0]["textContent"]);
+				}
+				riga += 5;				
+			});
+
+			doc.setFontType("italic");
+			doc.text(20, riga+10, $("#totale_kbd").text());
+			
+			
+
+			doc.save('Ricetta.pdf');
+		}
+
+		function salva_file() {
+
+
+			var elenco_funzioni = "";
+
+			$("#ricetta li").each(function(i) {
+
+				if($(this).hasClass("fase") || $(this).hasClass("riga")) {
+
+					if($(this).hasClass("fase")) {
+						var nome = String($("#ricetta li")[i].textContent).replaceAll("'", '\\\'');;
+
+						elenco_funzioni += "add_fase('" + nome + "');\n";
+
+					}else {
+						elenco_funzioni += "add_riga();\n";
+					}
+
+				
+
+				} else {
+					var nome = String($(this)[0]["children"][0]["textContent"]).replaceAll("'", '\\\'');
+
+					elenco_funzioni += "add_ingrediente('"+nome+"', '"+$(this)[0]["children"][1]["textContent"]+"');\n";
+
+				} 
+			} );
+
+
+					
+
+
+
+			base64 = window.btoa(elenco_funzioni);
+
+
+			//window.location.href = 'data:application/octet-stream;charset=utf-8;base64,' + base64;
+			downloadDataURI({
+			        filename: "ricetta.rct", 
+			        data: "data:application/octet-stream;base64," + base64
+			});
+
+		}
+
+		function handleFileSelect(evt) {
+
+			
+			$("#ricetta").empty();
+			$("#container1").fadeIn("slow");
+			$("#ricetta").fadeIn("slow");
+			quantita_totale = 0;
+			var elenco_funzioni = "";
+			var files = evt.target.files; // FileList object
+
+		    // Loop through the FileList and render image files as thumbnails.
+		    for (var i = 0, f; f = files[i]; i++) {
+
+
+		      var reader = new FileReader();
+
+		      // Closure to capture the file information.
+		      reader.onload = (function(theFile) {
+		        return function(e) {
+
+		        	elenco_funzioni = e.target.result;
+		                            
+		        };
+		      })(f);
+
+		      // Read in the image file as a data URL.
+		      reader.readAsText(f, 'ISO-8859-1');
+		    }
+
+		    setTimeout(function() { 
+		    	elenco_funzioni = elenco_funzioni.split("\n");
+
+
+		    	for (var i in elenco_funzioni) {
+		    		var ret = eval(elenco_funzioni[i]);
+		    	}
+
+		    }, 500);
+
+		  }
+
+
+
+
+
+
+		</script>
+	</head>
+	
+	<body>
+		<div class="wrapper">
+			
+			<div class="header">
+			  <h3>Crea Ricetta</h3>
+
+				<div class="btn-group" id="info">
+					<span type="button" class="btn btn-default dropdown-toggle glyphicon glyphicon-question-sign" data-toggle="dropdown"></span>
+					<div class="dropdown-menu pull-right" role="menu" style="padding:1px;">
+						
+						<div class="panel panel-primary" style="margin-bottom:0; opacity:1; z-index:999">
+							<div class="panel-heading">
+								<h3 class="panel-title">Crediti</h3>
+							</div>
+							<div class="panel-body">
+								<p>Creato da <strong><a href="http://lola.mondoweb.net/memberlist.php?mode=viewprofile&u=31791" target="_blank">Augusten</a></strong> per l'<strong><a href="http://lola.mondoweb.net/index.php" target="_blank">Angolo di Lola</a></strong>
+
+								<br>
+								<br>
+
+								<p>
+									<a type="button" class="btn btn-primary" href="mailto:augusten@outlook.com">
+										<span class="glyphicon glyphicon-envelope"></span>
+									</a>
+								</p>
+
+								<br>
+								<br>
+
+
+								<p style="font-size:10px"><a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Licenza Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />Quest'opera è distribuita con Licenza <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribuzione - Non commerciale - Non opere derivate 4.0 Internazionale</a>.</p>
+
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
+			
+
+			<div class="container">
+
+				<div class="row">
+
+					<button id="add_fase" type="button" class="btn btn-primary btn-block"><span class='glyphicon glyphicon-plus-sign'></span> Aggiungi Fase</button>
+
+				</div>
+
+				<br>
+				<div class="row">
+					<form id="formo" data-ajax="false">
+						<table id="tab" >
+							<tr>
+								<th>Nome ingrediente:</th>
+								<th>Quantità: </th>
+							</tr>
+							<tr>							
+								<td style="width: 40%"><input type="text" id="nome_ingrediente" class="form-control" style="background-color:#ffffff !important"/></td>
+								<td style="width: 40%"><input type="number" id="quantita_ingrediente" step="any" class="form-control"/></td>
+								<td style="width: 20%; text-align: right"><button type="submit" id="add_ingrediente" value="Aggiungi ingrediente" type="button" class="btn btn-primary"><span class='glyphicon glyphicon-plus-sign'></span> Aggiungi Ingrediente</button></td>
+							</tr>
+
+						</table>
+					</form>
+				</div>
+
+				<div class="row">
+					<button id="add_riga" type="button" class="btn btn-default btn-block" style="margin-top:20px"><span class='glyphicon glyphicon-plus-sign'></span> Aggiungi riga vuota</button>
+				</div>
+			</div>
+
+			<div class="container" style="text-align: center;">
+				<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#avanzate">Opzioni avanzate</button>
+				<div id="avanzate" class="collapse out" style="text-align:center">
+					<p style="margin-top:10px">Da qui puoi impostare automaticamente delle ricette di partenza (fonte delle ricette: <a href="http://lola.mondoweb.net/index.php" target="_blank">Angolo di Lola</a>)</p>
+					<div class="btn-group">
+						<button type="button" class="btn btn-default" id="ricetta_rosa">Crema viso alla rosa 2013</button>
+						<button type="button" class="btn btn-default" id="ricetta_siero">Siero Phito Lift</button>
+						<button type="button" class="btn btn-default" id="ricetta_iseree">Detergente Iseree</button>
+					</div>
+					<div class="separatore"></div>
+					<p>Carica una ricetta salvata: <input type="file" id="files" name="files[]" style="display:inline; margin-left:10px"/></p>
+				</div>
+			</div>
+
+
+			<div class="container" id="container1">
+				<div class="row">
+					<div id="contenuto">
+						<ul id="ricetta" >
+						</ul>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="separatore"></div>
+					<div id="totale"></div>
+				</div>
+
+				<div class="row">
+
+					<a id="salva_file" type="button" class="btn btn-success pull-right" ><span class='glyphicon glyphicon-pencil'></span> Salva ricetta</a>
+					<button id="reset" class="btn btn-danger btn-xs pull-left"><span class='glyphicon glyphicon-trash'></span> Cancella tutto</button>
+				</div>
+			</div>
+
+
+			<div class="container" id="container2">
+				<div class="row" style="text-align: center">
+					<button id="stampa_semplice" type="button" class="btn btn-default"><span class='glyphicon glyphicon-pencil'></span> Stampa ricetta semplice</button>
+					
+					
+				</div>
+
+				<div class="row" id="output">
+					<div class="well"><kbd></kbd><p id="totale_kbd" style="text-align:center"></p></div>
+					<div class="row convertitore" style="text-align:center">
+						<form id="form_convert">
+							<p style="text-weight:bold">Converti in ricetta da: 
+							<input type="number" id="quantita_ricetta" class="form-control" style="width:75px; margin: auto; display:inline"/> gr
+												
+							<button id="converti" class="btn btn-success" style="margin-left:10px"><span class='glyphicon glyphicon-ok'></span> OK</button>						
+							</p>
+						</form>
+					</div>
+					<div class="info_convertitore alert alert-danger" style="text-align:center">
+						<p>Attenzione. La somma degli ingredienti della ricetta non è 100. Prima di poter convertire, sistema le quantità e ristampa la ricetta.</p>
+					</div>
+					<button id="print_pdf" class="btn btn-warning pull-right" >Crea PDF</pdf>
+				</div>
+
+
+
+			</div>
+
+
+			
+
+
+
+
+
+
+
+
+
+		</div>
+
+
+	</body>
+</html>
