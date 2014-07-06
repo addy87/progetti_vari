@@ -3,33 +3,41 @@ function cascata() {
 	var leggerissimi = 0;
 	var medi = 0;
 	var pesanti = 0;
+	var burri = 0;
 	var totale = [];
 	var nomi = "";
 
 	$("kbd li.ingrediente").each(function(i) {
-		var valore = assegna($(this).find(".nome").text().toLowerCase());
-		var quantita = $(this).find(".quantita_singola").text();
-		if(valore!=null) {
+	
+		if ($(this).find(".nome").text().toLowerCase().indexOf("burro") != -1) {
+			var quantita_burro = $(this).find(".quantita_singola").text();
+			burri += 1*quantita_burro;
 			nomi += $(this).find(".nome").text() + "; ";
+		} else {
+			var valore = assegna($(this).find(".nome").text().toLowerCase());
+			var quantita = $(this).find(".quantita_singola").text();
+			if(valore!=null) {
+				nomi += $(this).find(".nome").text() + "; ";
 
 
-			switch (valore) {
-				case "leggerissimo":
-					leggerissimi += 1*quantita;
-					break;
-				case "leggero":
-					leggeri += 1*quantita;
-					break;
-				case "medio":
-					medi += 1*quantita;
-					break;
-				case "pesante":
-					pesanti += 1*quantita;
-					break;
-				default:
-					console.log("sono in default di switch valore");
+				switch (valore) {
+					case "leggerissimo":
+						leggerissimi += 1*quantita;
+						break;
+					case "leggero":
+						leggeri += 1*quantita;
+						break;
+					case "medio":
+						medi += 1*quantita;
+						break;
+					case "pesante":
+						pesanti += 1*quantita;
+						break;
+					default:
+						console.log("sono in default di switch valore");
+				}
+				
 			}
-			
 		}
 	});
 
@@ -37,12 +45,13 @@ function cascata() {
 	totale.push(leggeri);
 	totale.push(medi);
 	totale.push(pesanti);
+	totale.push(burri);
 
 
-	if (leggerissimi+leggeri+medi+pesanti > 0) {
+	if (leggerissimi+leggeri+medi+pesanti+burri > 0) {
 		disegna(totale);
 		$("#elenco_oli_considerati").show();
-		$("#elenco_oli_considerati").text("Oli considerati: " + nomi);
+		$("#elenco_oli_considerati").text("Grassi considerati: " + nomi);
 	}
 	else {
 		$("#canvas").hide();
@@ -666,7 +675,7 @@ Highcharts.setOptions(Highcharts.theme);
                 text: 'Cascata di Grassi'
             },
             xAxis: {
-                categories: ["Leggerissimi", "Leggeri", "Medi", "Pesanti"]
+                categories: ["Leggerissimi", "Leggeri", "Medi", "Pesanti", "Burri"]
             },
             yAxis: {
                 title: {
