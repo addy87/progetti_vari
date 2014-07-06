@@ -239,7 +239,7 @@
 			}
 		}
 
-		function add_ingrediente(par_nome, par_qt) {
+		function add_ingrediente(par_nome, par_qt, part_posizione) {
 
 
 			var nome = $("#nome_ingrediente").val();
@@ -265,12 +265,19 @@
 				$("#ricetta").fadeIn("slow");
 
 				var testo = "<li class='ingrediente'><span class='nome'>"+nome + "</span> <span class='quantita_singola'>" + parseFloat(quantita).toFixed(2) + "</span><a href='' style='float:right; color:#d9534f' onClick='$(this).parent().remove(); cancella_ingrediente("+quantita+"); return false'><span class='glyphicon glyphicon-remove'></span></a><a href='' style='float:right; color:#2887FF; margin-right:5px' class='modifica'><span class='glyphicon glyphicon-pencil'></span></a><input type='checkbox' name='lipide' class='lipide' style='float:right'/><span style='float:right' class='lipide_caption'>Lipide?</span></li>";
-				$("#ricetta").append(testo);
+
+				if(part_posizione != null) {
+					$("#ricetta li:eq("+parseInt(part_posizione-1)+")").after(testo);
+				} else {
+					$("#ricetta").append(testo);
+				}
+
 
 				$(".modifica").unbind("click").click(modifica_ingrediente);
 				$(".rimuovi").click(cancella_ingrediente);
 				$(".lipide").click(lipide);
 			}
+
 			check();
 		}
 
@@ -314,6 +321,7 @@
 				console.log(err);
 			}
 
+			var posizione = $(this).parent().index();
 			var vecchio_nome = $(this).parent()[0]["children"][0]["textContent"];
 			var vecchia_quantita = parseFloat($(this).parent()[0]["children"][1]["textContent"]);
 
@@ -339,7 +347,7 @@
 			$(this).parent().remove();
 
 			cancella_ingrediente(vecchia_quantita);
-			add_ingrediente(nuovo_nome, String(nuova_quantita));
+			add_ingrediente(nuovo_nome, String(nuova_quantita), posizione);
 			check();
 
 
