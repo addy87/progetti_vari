@@ -3,31 +3,197 @@
 	<head>
 		<title>Crea Ricetta</title>
 		<meta charset='utf-8'/>
-				
-		<script type="text/javascript" src="data/jquery-1.8.3.js"></script>
 
-		<script type="text/javascript" src="data/jquery-ui-1.10.4.custom.js"></script>
-		<script type="text/javascript" src="data/bootstrap/js/bootstrap.js"></script>
-		<script type="text/javascript" src="data/touch.js"></script>
-		<script type="text/javascript" src="data/typeahead.bundle.js"></script>
-		<script type="text/javascript" src="data/autocomplete.js"></script>
-		<script type="text/javascript" src="data/jspdf.min.js"></script>
-		<script type="text/javascript" src="data/ricette_lola.js"></script>
-		<script type="text/javascript" src="data/cascata.js"></script>
-		<script type="text/javascript" src="data/download-data-uri.js"></script>
-		<script type="text/javascript" src="data/jquery.tinysort.min.js"></script>
-		<script type="text/javascript" src="data/highcharts.js"></script>
-
-
-		<link rel="stylesheet" href="data/bootstrap/css/bootstrap.css"></link>
-		<link rel="stylesheet" href="data/file.css"></link>
+		<link rel="stylesheet" href="data/bootstrap/css/bootstrap.css"></link>		
 		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-
+		<link href="data/flat/flat-ui.css" rel="stylesheet">
+		<link rel="stylesheet" href="data/file.css"></link>
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=0.8, minimum-scale=0.8, maximum-scale=0.8">
-		<style type="text/css">
 
-		</style>
-		<script>
+		
+	</head>
+	
+	<body>
+		<div class="wrapper">
+			
+			<div class="header">
+			  <h3>Crea Ricetta</h3>
+
+				<div class="btn-group" id="info">
+					<span type="button" class="btn btn-default dropdown-toggle glyphicon glyphicon-question-sign" data-toggle="dropdown"></span>
+					<div class="dropdown-menu pull-right" role="menu" style="padding:1px;">
+						
+						<div class="panel panel-primary" style="margin-bottom:0; opacity:1; z-index:999">
+							<div class="panel-heading">
+								<h3 class="panel-title">Crediti</h3>
+							</div>
+							<div class="panel-body">
+								<p>Creato da <strong><a href="http://lola.mondoweb.net/memberlist.php?mode=viewprofile&u=31791" target="_blank">Augusten</a></strong> per l'<strong><a href="http://lola.mondoweb.net/index.php" target="_blank">Angolo di Lola</a></strong>
+
+								<br>
+								<br>
+
+								<p>
+									<a type="button" class="btn btn-primary" href="mailto:augusten@outlook.com">
+										<span class="glyphicon glyphicon-envelope"></span>
+									</a>
+								</p>
+
+								<br>
+								<br>
+
+
+								<p style="font-size:10px"><a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Licenza Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />Quest'opera è distribuita con Licenza <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribuzione - Non commerciale - Non opere derivate 4.0 Internazionale</a>.</p>
+
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
+			
+			<div class="container settore_transp">				
+				<div class="col-md-4" id="container0">
+
+					<div class="container controller" style="">
+						<img class="ico_controller" src="data/images/ingr.png"/>
+						<div class="row">							
+							<form id="formo" data-ajax="false">
+								<table id="tab" >									
+									<tr>							
+										<td style="width: 65%"><input type="text" id="nome_ingrediente" class="form-control" style="background-color:#ffffff !important" placeholder="Nome Ingrediente"/></td>
+										<td style="width: 35%"><input type="number" id="quantita_ingrediente" step="any" class="form-control" placeholder="Quantità"/></td>				
+									</tr>
+								</table>
+								<button type="submit" id="add_ingrediente" value="Aggiungi ingrediente" type="button" class="btn btn-success btn-block" style="margin: 10px 0 0 0"><span class='fui-plus'></span> Aggiungi Ingrediente</button>
+							</form>							
+						</div>
+					</div>
+
+					<div class="container controller">
+						<img class="ico_controller ico_controller_small" src="data/images/control.png"/>
+						<div class="row">
+							<button id="add_fase" type="button" class="btn btn-primary btn-block"><span class='fui-plus'></span> Aggiungi Fase</button>					
+							<button id="add_testo" type="button" class="btn btn-primary btn-block" style=""><span class='fui-plus'></span> Aggiungi riga di testo</button>
+							<button id="add_riga" type="button" class="btn btn-primary btn-block" style=""><span class='fui-plus'></span> Aggiungi riga vuota</button>
+						</div>
+					</div>
+
+					<div class="container " style="text-align: center;">
+						
+
+						<p style="text-align:center; padding:0; margin: 0; margin-bottom:5px">Opzioni avanzate</p>
+						<input type="checkbox" data-toggle="switch" id="opzioni_avanzate" name="opzioni_avanzate" data-toggle="collapse" data-target="#avanzate" />
+						
+
+
+
+						<div id="avanzate" class="collapse out" style="text-align:center">
+							<p style="margin-top:10px">Da qui puoi impostare automaticamente delle ricette di partenza (fonte delle ricette: <a href="http://lola.mondoweb.net/index.php" target="_blank">Angolo di Lola</a>)</p>
+							
+								<button type="button" class="btn btn-default" id="ricetta_rosa">Crema viso alla rosa 2013</button>
+								<button type="button" class="btn btn-default" id="ricetta_siero">Siero Phito Lift</button>
+								<button type="button" class="btn btn-default" id="ricetta_iseree">Detergente Iseree</button>
+							
+							<div class="separatore"></div>
+							<div class="controller controller_load">
+								<p>Carica una ricetta salvata: <input type="file" id="files" name="files[]" style="display:inline; margin-left:10px"/></p>
+							</div>
+							
+						</div>
+					</div>
+				</div>
+				<div class="col-md-8">
+					<div class="container" id="container1">
+						<div class="row">
+							<div id="contenuto">
+								<ul id="ricetta" >
+								</ul>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="separatore"></div>
+							<div id="totale"></div>
+						</div>
+
+						<div class="row">
+							<a id="salva_file" type="button" class="btn btn-success pull-right" ><span class='icona_span'><img class="icona" src="data/images/save.png"/></span> Salva ricetta</a>
+							<button id="reset" class="btn btn-danger pull-left"><span class='icona_span'><img class="icona" src="data/images/trash.png"/></span>Cancella tutto</button>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="container settore_transp" id="container2">
+				<div class="col-md-12">
+					<div class="container">
+						<div class="row" style="text-align: center">
+							<button id="stampa_semplice" type="button" class="btn btn-default"><span class="glyphicon"><img class="icona_big" src="data/images/elabora.png"/></span> Elabora ricetta</button>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-12">
+					<div class="container" id="output">
+						<div class="row" >
+							<div id="canvas" height="450" width="600"></div>
+							<p id="elenco_oli_considerati"></p>
+							<p id="info_canvas">Attenzione. Il presente grafico ha solamente uno scopo indicativo. Se è stato inserito un olio non conosciuto, esso non verrà elencato nel grafico. Inoltre, oli con lo stesso nome potrebbero avere caratteristiche diverse a seconda della loro provenienza/estrazione/qualità/ecc.</p>
+							
+
+							<p id="grassi"></p>
+
+							
+							<div class="well"><kbd></kbd><p id="totale_kbd" style="text-align:center"></p></div>
+							<div class="row convertitore" style="text-align:center">
+								<form id="form_convert">
+									<p style="text-weight:bold">Converti in ricetta da: 
+									<input type="number" id="quantita_ricetta" class="form-control" style="width:75px; margin: auto; display:inline"/> gr
+														
+									<button id="converti" class="btn btn-success" style="margin-left:10px"><span class='glyphicon glyphicon-ok'></span> OK</button>						
+									</p>
+								</form>
+								
+							</div>
+							
+							<div class="info_convertitore alert alert-danger" style="text-align:center">
+								<p>Attenzione. La somma degli ingredienti della ricetta non è 100. Prima di poter convertire, sistema le quantità e ristampa la ricetta.</p>
+							</div>
+
+							<button id="print_pdf" class="btn btn-warning pull-right"><span class="glyphicon"><img class="icona_big" src="data/images/pdf.png"/></span>Crea PDF</button>
+						</div>
+					</div>
+				</div>
+
+			</div>	
+
+
+		</div>
+	</body>
+	<script type="text/javascript" src="data/jquery-1.8.3.js"></script>
+	<script type="text/javascript" src="data/jquery-ui-1.10.4.custom.js"></script>
+	<script type="text/javascript" src="data/bootstrap/js/bootstrap.js"></script>
+	<script type="text/javascript" src="data/touch.js"></script>
+	<script type="text/javascript" src="data/typeahead.bundle.js"></script>
+	<script type="text/javascript" src="data/autocomplete.js"></script>
+	<script type="text/javascript" src="data/jspdf.min.js"></script>
+	<script type="text/javascript" src="data/ricette_lola.js"></script>
+	<script type="text/javascript" src="data/cascata.js"></script>
+	<script type="text/javascript" src="data/download-data-uri.js"></script>
+	<script type="text/javascript" src="data/jquery.tinysort.min.js"></script>
+	<script type="text/javascript" src="data/highcharts.js"></script>
+	<script src="data/flat/bootstrap-select.js"></script>
+	<script src="data/flat/bootstrap-switch.js"></script>
+	<script src="data/flat/flatui-checkbox.js"></script>
+	<script src="data/flat/flatui-radio.js"></script>
+	<script src="data/flat/jquery.tagsinput.js"></script>
+	<script src="data/flat/jquery.placeholder.js"></script>
+
+	<script>
 		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -162,8 +328,15 @@
 
 			$("#info").pulse({times: 6, duration: 200});
 
+			//Start Toggle
+			$("[data-toggle='switch']").wrap('<div class="switch" />').parent().bootstrapSwitch();
+
+			$(".switch").on('switch-change', function(event, state) {
+				$("#avanzate").collapse("toggle");
+			});
+			//End Toggle
 			
-			
+
 			autocomplete();
 			$("#files").change(handleFileSelect);
 			$("#add_fase").click(add_fase);
@@ -189,6 +362,8 @@
 
 			$("#container1").hide();
 			$("#container2").hide();
+
+			$("#container0").removeClass("col-md-4").addClass("col-md-12");
 
 			$("#output").hide();
 			$("#canvas").hide();
@@ -392,6 +567,7 @@
 			if($("#ricetta").find("li").length > 0) {
 				$("#reset").show();
 				$("#totale").fadeIn("slow");
+				$("#container0").removeClass("col-md-12").addClass("col-md-4");
 				$("#container1").fadeIn("slow");
 				$("#container2").fadeIn("slow");
 			} else {
@@ -399,6 +575,7 @@
 				$("#totale").fadeOut("slow");
 				$("#container1").fadeOut("slow");
 				$("#container2").fadeOut("slow");
+				$("#container0").removeClass("col-md-4").addClass("col-md-12");
 			}
 
 
@@ -412,11 +589,11 @@
 			
 
 			if (mancano.toFixed(2) <= 0)
-				$("#totale").html("<p>Totale: " + quantita_totale.toFixed(2) + "gr</p>");
+				$("#totale").html("<p style='font-weight:bold'>Totale: " + quantita_totale.toFixed(2) + "gr</p>");
 			else if (mancano.toFixed(2) > 0) {
-				$("#totale").html("<p>Totale: " + quantita_totale.toFixed(2) + "</p><p>Mancano " + mancano.toFixed(2) + "gr per arrivare a 100. <a onClick='add_ingrediente("+"\"Acqua\",\""+mancano.toFixed(2)+"\"); return false' href=''>Vuoi aggiungerli in acqua?</a>");
+				$("#totale").html("<p style='font-weight:bold'>Totale: " + quantita_totale.toFixed(2) + "</p><p>Mancano " + mancano.toFixed(2) + "gr per arrivare a 100gr. <a onClick='add_ingrediente("+"\"Acqua\",\""+mancano.toFixed(2)+"\"); return false' href=''>Vuoi aggiungerli in acqua? <img src='data/images/water.png' width='24' /></a>");
 			} else if (mancano.toFixed(2) >0 && quantita_totale.toFixed(2) < 0)
-				$("#totale").html("<p>Totale: " + quantita_totale.toFixed(2) + "gr. Antimateria creata. DISTRUZIONE UNIVERSO IN CORSO....</p>");
+				$("#totale").html("<p style='font-weight:bold'>Totale: " + quantita_totale.toFixed(2) + "gr. Antimateria creata. DISTRUZIONE UNIVERSO IN CORSO....</p>");
 
 			
 
@@ -602,6 +779,7 @@
 			
 			$("#ricetta").empty();
 			$("#container1").fadeIn("slow");
+			$("#container0").removeClass("col-md-12").addClass("col-md-4");
 			$("#ricetta").fadeIn("slow");
 			quantita_totale = 0;
 			var elenco_funzioni = "";
@@ -663,162 +841,6 @@
 
 
 		</script>
-	</head>
-	
-	<body>
-		<div class="wrapper">
-			
-			<div class="header">
-			  <h3>Crea Ricetta</h3>
-
-				<div class="btn-group" id="info">
-					<span type="button" class="btn btn-default dropdown-toggle glyphicon glyphicon-question-sign" data-toggle="dropdown"></span>
-					<div class="dropdown-menu pull-right" role="menu" style="padding:1px;">
-						
-						<div class="panel panel-primary" style="margin-bottom:0; opacity:1; z-index:999">
-							<div class="panel-heading">
-								<h3 class="panel-title">Crediti</h3>
-							</div>
-							<div class="panel-body">
-								<p>Creato da <strong><a href="http://lola.mondoweb.net/memberlist.php?mode=viewprofile&u=31791" target="_blank">Augusten</a></strong> per l'<strong><a href="http://lola.mondoweb.net/index.php" target="_blank">Angolo di Lola</a></strong>
-
-								<br>
-								<br>
-
-								<p>
-									<a type="button" class="btn btn-primary" href="mailto:augusten@outlook.com">
-										<span class="glyphicon glyphicon-envelope"></span>
-									</a>
-								</p>
-
-								<br>
-								<br>
-
-
-								<p style="font-size:10px"><a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Licenza Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />Quest'opera è distribuita con Licenza <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribuzione - Non commerciale - Non opere derivate 4.0 Internazionale</a>.</p>
-
-							</div>
-						</div>
-					</div>
-
-				</div>
-
-			</div>
-
-			
-
-			<div class="container">
-
-				<div class="row">
-
-					<button id="add_fase" type="button" class="btn btn-primary btn-block"><span class='glyphicon glyphicon-plus-sign'></span> Aggiungi Fase</button>
-
-				</div>
-
-				<br>
-				<div class="row">
-					<form id="formo" data-ajax="false">
-						<table id="tab" >
-							<tr>
-								<th>Nome ingrediente:</th>
-								<th>Quantità: </th>
-							</tr>
-							<tr>							
-								<td style="width: 40%"><input type="text" id="nome_ingrediente" class="form-control" style="background-color:#ffffff !important"/></td>
-								<td style="width: 40%"><input type="number" id="quantita_ingrediente" step="any" class="form-control"/></td>
-								<td style="width: 20%; text-align: right"><button type="submit" id="add_ingrediente" value="Aggiungi ingrediente" type="button" class="btn btn-success"><span class='glyphicon glyphicon-plus-sign'></span> Aggiungi Ingrediente</button></td>
-							</tr>
-
-						</table>
-					</form>
-				</div>
-
-				<div class="row">
-					
-					<button id="add_testo" type="button" class="btn btn-warning btn-block" style="margin-top:20px"><span class='glyphicon glyphicon-plus-sign'></span> Aggiungi riga di testo</button>
-					<button id="add_riga" type="button" class="btn btn-default btn-block" style="margin-top:20px"><span class='glyphicon glyphicon-plus-sign'></span> Aggiungi riga vuota</button>
-				</div>
-			</div>
-
-			<div class="container" style="text-align: center;">
-				<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#avanzate">Opzioni avanzate</button>
-				<div id="avanzate" class="collapse out" style="text-align:center">
-					<p style="margin-top:10px">Da qui puoi impostare automaticamente delle ricette di partenza (fonte delle ricette: <a href="http://lola.mondoweb.net/index.php" target="_blank">Angolo di Lola</a>)</p>
-					<div class="btn-group">
-						<button type="button" class="btn btn-default" id="ricetta_rosa">Crema viso alla rosa 2013</button>
-						<button type="button" class="btn btn-default" id="ricetta_siero">Siero Phito Lift</button>
-						<button type="button" class="btn btn-default" id="ricetta_iseree">Detergente Iseree</button>
-					</div>
-					<div class="separatore"></div>
-					<p>Carica una ricetta salvata: <input type="file" id="files" name="files[]" style="display:inline; margin-left:10px"/></p>
-					
-				</div>
-			</div>
-
-
-			<div class="container" id="container1">
-				<div class="row">
-					<div id="contenuto">
-						<ul id="ricetta" >
-						</ul>
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="separatore"></div>
-					<div id="totale"></div>
-				</div>
-
-				<div class="row">
-					<a id="salva_file" type="button" class="btn btn-success pull-right" ><span class='glyphicon glyphicon-pencil'></span> Salva ricetta</a>
-					<button id="reset" class="btn btn-danger btn-xs pull-left"><span class='glyphicon glyphicon-trash'></span> Cancella tutto</button>
-					
-				</div>
-			</div>
-
-
-			<div class="container" id="container2">
-				<div class="row" style="text-align: center">
-					<button id="stampa_semplice" type="button" class="btn btn-default"><span class='glyphicon glyphicon-pencil'></span> Stampa ricetta semplice</button>
-					
-					
-				</div>
-
-				<div class="row" id="output">
-
-					<div id="canvas" height="450" width="600"></div>
-					<p id="elenco_oli_considerati"></p>
-					<p id="info_canvas">Attenzione. Il presente grafico ha solamente uno scopo indicativo. Se è stato inserito un olio non conosciuto, esso non verrà elencato nel grafico. Inoltre, oli con lo stesso nome potrebbero avere caratteristiche diverse a seconda della loro provenienza/estrazione/qualità/ecc.</p>
-					
-
-					<p id="grassi"></p>
-
-					
-					<div class="well"><kbd></kbd><p id="totale_kbd" style="text-align:center"></p></div>
-					<div class="row convertitore" style="text-align:center">
-						<form id="form_convert">
-							<p style="text-weight:bold">Converti in ricetta da: 
-							<input type="number" id="quantita_ricetta" class="form-control" style="width:75px; margin: auto; display:inline"/> gr
-												
-							<button id="converti" class="btn btn-success" style="margin-left:10px"><span class='glyphicon glyphicon-ok'></span> OK</button>						
-							</p>
-						</form>
-						
-					</div>
-					
-					<div class="info_convertitore alert alert-danger" style="text-align:center">
-						<p>Attenzione. La somma degli ingredienti della ricetta non è 100. Prima di poter convertire, sistema le quantità e ristampa la ricetta.</p>
-					</div>
-
-					<button id="print_pdf" class="btn btn-warning pull-right" >Crea PDF</pdf>
-				</div>
-
-
-
-			</div>
-
-
-			
 
 
 
@@ -828,8 +850,14 @@
 
 
 
-		</div>
 
 
-	</body>
+
+
+
+
+
+
+
+
 </html>
